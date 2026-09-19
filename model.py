@@ -123,8 +123,12 @@ def merge_heads_back_to_model_dim(multi_head_tensor):
     multi_head_tensor = multi_head_tensor.transpose(-2,-3)
     return multi_head_tensor.reshape(batch_size,seq_len,num_heads * d_k)
 
-# Step 26 - apply_linear_projection (not yet solved)
-# TODO: implement
+# Step 26 - apply_linear_projection
+def apply_linear_projection(x, weight, bias):
+    if bias is not None:
+        return x @ weight.T + bias
+    else:
+        return x @ weight.T
 
 # Step 27 - project_to_query_key_value (not yet solved)
 # TODO: implement
