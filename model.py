@@ -130,8 +130,23 @@ def apply_linear_projection(x, weight, bias):
     else:
         return x @ weight.T
 
-# Step 27 - project_to_query_key_value (not yet solved)
-# TODO: implement
+# Step 27 - project_to_query_key_value
+def project_to_query_key_value(x, w_q, b_q, w_k, b_k, w_v, b_v):
+    if b_q is not None:
+        query = x @ w_q.T + b_q
+    else:
+        query = x @ w_q.T
+    
+    if b_k is not None:
+        key = x @ w_k.T + b_k
+    else:
+        key = x @ w_k.T
+
+    if b_v is not None:
+        value = x @ w_v.T + b_v
+    else:
+        value = x @ w_v.T
+    return query,key,value
 
 # Step 28 - split_qkv_into_heads (not yet solved)
 # TODO: implement
