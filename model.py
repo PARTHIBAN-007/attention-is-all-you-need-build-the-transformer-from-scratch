@@ -170,8 +170,17 @@ def multi_head_scaled_dot_product_attention(q_h, k_h, v_h, mask=None):
     context_vector = (attention_weights @ v_h)
     return (context_vector,attention_weights)
 
-# Step 30 - merge_heads_and_project_output (not yet solved)
-# TODO: implement
+# Step 30 - merge_heads_and_project_output
+import torch
+
+def merge_heads_and_project_output(context, w_o, b_o):
+    batch_size, num_heads, seq_len, head_dim = context.shape
+    context = context.transpose(-2,-3)
+    context = context.reshape(batch_size,seq_len,num_heads*head_dim)
+    if b_o is not None:
+        return context @ w_o.T + b_o
+    else:
+        return context @ w_o.T
 
 # Step 31 - assemble_multi_head_attention_forward (not yet solved)
 # TODO: implement
