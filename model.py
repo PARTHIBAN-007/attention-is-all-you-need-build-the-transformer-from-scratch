@@ -182,8 +182,35 @@ def merge_heads_and_project_output(context, w_o, b_o):
     else:
         return context @ w_o.T
 
-# Step 31 - assemble_multi_head_attention_forward (not yet solved)
-# TODO: implement
+# Step 31 - assemble_multi_head_attention_forward
+import torch
+
+def assemble_multi_head_attention_forward(query, key, value, w_q, w_k, w_v, w_o, num_heads, mask=None):
+    query = query @ w_q
+    key = key @ w_k
+    value = value @ w_v
+    
+    batch_size, seq_len_q, d_model = query.shape
+    _, seq_len_kv, _ = key.shape
+    
+    head_dim = d_model // num_heads
+    
+    query = query.view(batch_size, seq_len_q, num_heads, head_dim).transpose(-2, -3)
+    key = key.view(batch_size, seq_len_kv, num_heads, head_dim).transpose(-2, -3)
+    value = value.view(batch_size, seq_len_kv, num_heads, head_dim).transpose(-2, -3)
+
+    attention_score = query @ key.transpose(-2, -1) / (head_dim ** 0.5)
+    
+    if mask is not None:
+        attention_score = attention_score.masked_fill(mask == False, -torch.inf)
+        
+    attention_weights = attention_score.softmax(dim=-1)
+    context_vector = attention_weights @ value
+
+    context_vector = context_vector.transpose(-2, -3)
+    context_vector = context_vector.reshape(batch_size, seq_len_q, num_heads * head_dim)
+    
+    return context_vector @ w_o
 
 # Step 32 - apply_ffn_first_linear_and_relu (not yet solved)
 # TODO: implement
