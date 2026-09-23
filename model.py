@@ -212,8 +212,10 @@ def assemble_multi_head_attention_forward(query, key, value, w_q, w_k, w_v, w_o,
     
     return context_vector @ w_o
 
-# Step 32 - apply_ffn_first_linear_and_relu (not yet solved)
-# TODO: implement
+# Step 32 - apply_ffn_first_linear_and_relu
+import torch
+def apply_ffn_first_linear_and_relu(x, w1, b1):
+    return torch.relu(x @ w1 + b1)
 
 # Step 33 - apply_ffn_second_linear (not yet solved)
 # TODO: implement
