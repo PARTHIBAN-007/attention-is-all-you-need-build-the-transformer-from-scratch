@@ -229,11 +229,22 @@ def position_wise_feed_forward_network(x, w1, b1, w2, b2):
     hidden = torch.relu(x @ w1 + b1)
     return hidden @ w2 + b2
 
-# Step 35 - compute_layer_norm_mean_and_variance (not yet solved)
-# TODO: implement
+# Step 35 - compute_layer_norm_mean_and_variance
+import torch
 
-# Step 36 - normalize_and_scale_with_gamma_beta (not yet solved)
-# TODO: implement
+def compute_layer_norm_mean_and_variance(x):
+    # TODO: return (mean, variance) reduced over the last dim with shape (..., 1)
+    mean = torch.mean(x,dim=-1,keepdims = True)
+    variance = torch.var(x,dim=-1,correction = 0,keepdims = True)
+    return (mean,variance)
+
+# Step 36 - normalize_and_scale_with_gamma_beta
+import torch
+
+def normalize_and_scale_with_gamma_beta(x, gamma, beta, eps=1e-5):
+    mean, variance = compute_layer_norm_mean_and_variance(x)
+    x_hat = (x - mean) / torch.sqrt(variance + eps)
+    return gamma * x_hat + beta
 
 # Step 37 - apply_residual_add_and_norm (not yet solved)
 # TODO: implement
