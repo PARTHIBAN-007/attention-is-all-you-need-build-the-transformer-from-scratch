@@ -48,7 +48,7 @@ python scaffold.py
 - [x] **36.** normalize_and_scale_with_gamma_beta
 - [x] **37.** apply_residual_add_and_norm
 - [ ] **38.** apply_dropout_with_keep_mask
-- [ ] **39.** encoder_layer_self_attention_sublayer
+- [x] **39.** encoder_layer_self_attention_sublayer
 - [ ] **40.** encoder_layer_feed_forward_sublayer
 - [ ] **41.** assemble_encoder_layer
 - [ ] **42.** stack_encoder_layers
@@ -77,6 +77,7 @@ python scaffold.py
 - [ ] **65.** update_adam_first_moment
 - [ ] **66.** update_adam_second_moment
 - [ ] **67.** apply_adam_bias_correction
+- [ ] **68.** compute_adam_parameter_update
 - [ ] **69.** apply_adam_step_to_all_parameters
 - [ ] **70.** zero_all_parameter_gradients
 - [ ] **71.** compute_batch_training_loss

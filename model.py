@@ -257,8 +257,10 @@ def apply_residual_add_and_norm(residual_input, sublayer_output, gamma, beta, ep
 # Step 38 - apply_dropout_with_keep_mask (not yet solved)
 # TODO: implement
 
-# Step 39 - encoder_layer_self_attention_sublayer (not yet solved)
-# TODO: implement
+# Step 39 - encoder_layer_self_attention_sublayer
+def encoder_layer_self_attention_sublayer(x, w_q, w_k, w_v, w_o, gamma, beta, num_heads, src_mask):
+    context = assemble_multi_head_attention_forward(x, x, x, w_q, w_k, w_v, w_o, num_heads, src_mask)
+    return apply_residual_add_and_norm(x,context,gamma,beta)
 
 # Step 40 - encoder_layer_feed_forward_sublayer (not yet solved)
 # TODO: implement
@@ -342,6 +344,9 @@ def apply_residual_add_and_norm(residual_input, sublayer_output, gamma, beta, ep
 # TODO: implement
 
 # Step 67 - apply_adam_bias_correction (not yet solved)
+# TODO: implement
+
+# Step 68 - compute_adam_parameter_update (not yet solved)
 # TODO: implement
 
 # Step 69 - apply_adam_step_to_all_parameters (not yet solved)
