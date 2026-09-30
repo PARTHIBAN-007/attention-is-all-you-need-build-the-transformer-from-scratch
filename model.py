@@ -398,8 +398,50 @@ def init_encoder_layer_parameters(d_model, num_heads, d_ff):
 
     }
 
-# Step 53 - init_decoder_layer_parameters (not yet solved)
-# TODO: implement
+# Step 53 - init_decoder_layer_parameters
+import torch
+
+def init_decoder_layer_parameters(d_model, num_heads, d_ff):
+    w_q_self = torch.rand((d_model,d_model),dtype =  torch.float32, requires_grad = True)
+    w_k_self = torch.rand((d_model,d_model),dtype =  torch.float32, requires_grad = True)
+    w_v_self = torch.rand((d_model,d_model),dtype =  torch.float32, requires_grad = True)
+    w_o_self = torch.rand((d_model,d_model),dtype =  torch.float32, requires_grad = True)
+    w_q_cross = torch.rand((d_model,d_model),dtype =  torch.float32, requires_grad = True)
+    w_k_cross = torch.rand((d_model,d_model),dtype =  torch.float32, requires_grad = True)
+    w_v_cross = torch.rand((d_model,d_model),dtype =  torch.float32, requires_grad = True)
+    w_o_cross = torch.rand((d_model,d_model),dtype =  torch.float32, requires_grad = True)
+    w_1 = torch.rand((d_model,d_ff),dtype =  torch.float32, requires_grad = True)
+    w_2 = torch.rand((d_ff,d_model),dtype =  torch.float32, requires_grad = True)
+    b1 = torch.zeros((d_ff,), dtype = torch.float32, requires_grad = True)
+    b2 = torch.zeros((d_model,), dtype = torch.float32, requires_grad = True)
+    self_gamma = torch.ones((d_model,), dtype = torch.float32, requires_grad = True)
+    self_beta = torch.zeros((d_model,), dtype = torch.float32, requires_grad = True)
+    cross_gamma = torch.ones((d_model,), dtype = torch.float32, requires_grad = True)
+    cross_beta = torch.zeros((d_model,), dtype = torch.float32, requires_grad = True)
+    ffn_gamma = torch.ones((d_model,), dtype = torch.float32, requires_grad = True)
+    ffn_beta = torch.zeros((d_model,), dtype = torch.float32, requires_grad = True)
+
+    params =  {
+        "w_q_self": w_q_self,
+        "w_k_self": w_k_self,
+        "w_v_self": w_v_self,
+        "w_o_self": w_o_self,
+        "w_q_cross": w_q_cross,
+        "w_k_cross": w_k_cross,
+        "w_v_cross": w_v_cross,
+        "w_o_cross": w_o_cross,
+        "w1": w_1,
+        "b1": b1,
+        "w2": w_2, 
+        "b2": b2, 
+        "self_gamma": self_gamma,
+        "self_beta": self_beta,
+        "cross_gamma": cross_gamma,
+        "cross_beta": cross_beta,
+        "ffn_gamma": ffn_gamma,
+        "ffn_beta": ffn_beta
+    }
+    return params
 
 # Step 54 - init_embedding_and_projection_parameters (not yet solved)
 # TODO: implement
