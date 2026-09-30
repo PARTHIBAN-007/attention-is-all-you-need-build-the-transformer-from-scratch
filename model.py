@@ -330,8 +330,13 @@ def stack_decoder_layers(y, encoder_output, decoder_layer_params_list, num_heads
         y = assemble_decoder_layer(y,encoder_output,layer,num_heads,src_mask,tgt_mask)
     return y
 
-# Step 48 - apply_final_output_projection (not yet solved)
-# TODO: implement
+# Step 48 - apply_final_output_projection
+import torch
+import torch.nn as nn
+def apply_final_output_projection(decoder_output, output_projection_weight, output_projection_bias=None):
+    if output_projection_bias is not None:
+        return decoder_output @ output_projection_weight.T + output_projection_bias
+    return decoder_output @ output_projection_weight.T
 
 # Step 49 - tie_output_projection_to_token_embeddings (not yet solved)
 # TODO: implement
