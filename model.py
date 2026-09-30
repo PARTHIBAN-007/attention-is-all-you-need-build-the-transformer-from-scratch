@@ -354,11 +354,49 @@ def apply_log_softmax_over_vocab(logits):
     # TODO: Convert decoder logits (B, T, V) into log probabilities over the vocabulary axis.
     return logits.log_softmax(dim=-1)
 
-# Step 51 - run_transformer_forward (not yet solved)
-# TODO: implement
+# Step 51 - run_transformer_forward
+def run_transformer_forward(src_ids, tgt_ids, model_params, num_heads, pad_id):
+    # TODO: embed src+tgt, add PE, build masks, run encoder/decoder, project to log probs.
+    x = model_params["token_embedding"][src_ids] + model_params["token_embedding"][tgt_ids]
+    # print(model_params)
+    enc = stack_encoder_layers(x,model_params["encoder_layers"], num_heads, src_ids)
+    dec = assemble_decoder_layer(x,enc,model_params["decoder_layers"], num_heads,src_ids,tgt_ids)
+    return dec
 
-# Step 52 - init_encoder_layer_parameters (not yet solved)
-# TODO: implement
+# Step 52 - init_encoder_layer_parameters
+import torch
+import math
+
+def init_encoder_layer_parameters(d_model, num_heads, d_ff):
+    """Return a dict of leaf tensors with requires_grad=True for one encoder layer."""
+    w_q = torch.rand((d_model,d_model),dtype =  torch.float32, requires_grad = True)
+    w_k = torch.rand((d_model,d_model),dtype =  torch.float32, requires_grad = True)
+    w_v = torch.rand((d_model,d_model),dtype =  torch.float32, requires_grad = True)
+    w_o = torch.rand((d_model,d_model),dtype =  torch.float32, requires_grad = True)
+    w_1 = torch.rand((d_model,d_ff),dtype =  torch.float32, requires_grad = True)
+    w_2 = torch.rand((d_ff,d_model),dtype =  torch.float32, requires_grad = True)
+    b1 = torch.zeros((d_ff,), dtype = torch.float32, requires_grad = True)
+    b2 = torch.zeros((d_model,), dtype = torch.float32, requires_grad = True)
+    attn_gamma = torch.ones((d_model,), dtype = torch.float32, requires_grad = True)
+    attn_beta = torch.zeros((d_model,), dtype = torch.float32, requires_grad = True)
+    ffn_gamma = torch.ones((d_model,), dtype = torch.float32, requires_grad = True)
+    ffn_beta = torch.zeros((d_model,), dtype = torch.float32, requires_grad = True)
+
+    return {
+        "w_q": w_q,
+        "w_k": w_k,
+        "w_v": w_v,
+        "w_o": w_o,
+        "w1": w_1,
+        "b1": b1,
+        "w2": w_2, 
+        "b2": b2, 
+        "attn_gamma": attn_gamma,
+        "attn_beta": attn_beta,
+        "ffn_gamma": ffn_gamma,
+        "ffn_beta": ffn_beta
+
+    }
 
 # Step 53 - init_decoder_layer_parameters (not yet solved)
 # TODO: implement
