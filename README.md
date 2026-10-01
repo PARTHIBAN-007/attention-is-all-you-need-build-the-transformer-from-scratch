@@ -10,7 +10,7 @@ python scaffold.py
 
 ## Steps
 
-- [ ] **1.** build_token_to_id_vocab
+- [x] **1.** build_token_to_id_vocab
 - [ ] **2.** build_id_to_token_vocab
 - [ ] **3.** encode_sentence_to_ids
 - [ ] **4.** decode_ids_to_tokens
@@ -64,8 +64,8 @@ python scaffold.py
 - [x] **52.** init_encoder_layer_parameters
 - [x] **53.** init_decoder_layer_parameters
 - [x] **54.** init_embedding_and_projection_parameters
-- [ ] **55.** collect_model_parameters_into_list
-- [ ] **56.** shift_targets_right_with_start_token
+- [x] **55.** collect_model_parameters_into_list
+- [x] **56.** shift_targets_right_with_start_token
 - [ ] **57.** compute_noam_learning_rate
 - [ ] **58.** build_uniform_smoothing_distribution
 - [ ] **59.** set_confidence_on_gold_tokens

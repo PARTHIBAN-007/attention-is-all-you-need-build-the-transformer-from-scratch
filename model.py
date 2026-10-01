@@ -6,8 +6,26 @@ Assembled from your step-by-step solutions.
 
 import numpy as np
 
-# Step 1 - build_token_to_id_vocab (not yet solved)
-# TODO: implement
+# Step 1 - build_token_to_id_vocab
+def build_token_to_id_vocab(sentences, specials=('<pad>', '<bos>', '<eos>', '<unk>')):
+    tokens = []
+    for s in sentences:
+        words = s.split(" ")
+        for word in words:
+            if word not in tokens and word not in specials:
+                tokens.append(word)
+    
+    
+    mpp = {}
+    n = len(specials)
+    i = 0
+    for word in specials:
+        mpp[word] = i
+        i+= 1
+    for word in tokens:
+        mpp[word] =  i
+        i+=1
+    return mpp
 
 # Step 2 - build_id_to_token_vocab (not yet solved)
 # TODO: implement
@@ -461,11 +479,26 @@ def init_embedding_and_projection_parameters(vocab_size, d_model, tie_weights=Tr
         "output_projection": output_projection
     }
 
-# Step 55 - collect_model_parameters_into_list (not yet solved)
-# TODO: implement
+# Step 55 - collect_model_parameters_into_list
+import torch
 
-# Step 56 - shift_targets_right_with_start_token (not yet solved)
-# TODO: implement
+def collect_model_parameters_into_list(encoder_layer_params, decoder_layer_params, embedding_params):
+    weights = torch.empty()
+    
+    for key,val in encoder_layer_params.items():
+        weights.expand(val)
+    
+    for key,val in decoder_layer_params.items():
+        weights.expand(val)
+
+    for key,val in embedding_params.items():
+        weights.expand(val)
+    
+    return weights
+
+# Step 56 - shift_targets_right_with_start_token
+def shift_targets_right_with_start_token(target_ids, start_token_id):
+    return target_ids[:][start_token_id:][:]
 
 # Step 57 - compute_noam_learning_rate (not yet solved)
 # TODO: implement
