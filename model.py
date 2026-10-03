@@ -94,11 +94,23 @@ def fill_even_indices_with_sin(pe, position, div_term):
     pe[:,::2]  = torch.sin(position * div_term)
     return pe
 
-# Step 11 - fill_odd_indices_with_cos (not yet solved)
-# TODO: implement
+# Step 11 - fill_odd_indices_with_cos
+import torch
 
-# Step 12 - build_sinusoidal_positional_encoding (not yet solved)
-# TODO: implement
+def fill_odd_indices_with_cos(pe, position, div_term):
+    pe[:,1::2]  = torch.cos(position * div_term)
+    return pe
+
+# Step 12 - build_sinusoidal_positional_encoding
+import torch
+
+def build_sinusoidal_positional_encoding(max_len, d_model):
+    pe = torch.zeros((max_len,d_model))
+    div_term = torch.exp(torch.arange(0, d_model, 2, dtype=torch.float32) * (-math.log(10000.0) / d_model))
+    position = torch.arange(0,max_len, dtype = torch.float32).reshape(max_len,1)
+    pe[:,::2]  = torch.sin(position * div_term)
+    pe[:,1::2]  = torch.cos(position * div_term)
+    return pe
 
 # Step 13 - add_positional_encoding_to_embeddings (not yet solved)
 # TODO: implement
