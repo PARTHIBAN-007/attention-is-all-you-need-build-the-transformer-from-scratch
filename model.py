@@ -120,8 +120,13 @@ def add_positional_encoding_to_embeddings(embedded_batch, positional_encoding):
     positional_encoding = positional_encoding[:seq_len,]
     return embedded_batch + positional_encoding
 
-# Step 14 - build_padding_mask (not yet solved)
-# TODO: implement
+# Step 14 - build_padding_mask
+import torch
+
+def build_padding_mask(token_ids, pad_id):
+    batch_size, seq_len = token_ids.shape
+    mask = token_ids != pad_id
+    return mask.reshape(batch_size,1,1,seq_len)
 
 # Step 15 - build_causal_mask (not yet solved)
 # TODO: implement
