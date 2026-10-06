@@ -133,8 +133,13 @@ def build_causal_mask(seq_len):
     mask = torch.tril(torch.ones(seq_len,seq_len)).bool()
     return mask.unsqueeze(0).unsqueeze(1)
 
-# Step 16 - combine_padding_and_causal_masks (not yet solved)
-# TODO: implement
+# Step 16 - combine_padding_and_causal_masks
+import torch
+
+def combine_padding_and_causal_masks(padding_mask, causal_mask):
+    padding_mask = padding_mask.int()
+    causal_mask = causal_mask.int()
+    return (padding_mask + causal_mask)==2
 
 # Step 17 - compute_raw_attention_scores
 import torch
