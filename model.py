@@ -178,14 +178,14 @@ import torch
 
 def scaled_dot_product_attention(query, key, value, mask=None):
     d_k = key.shape[-1]
-    attention_score = query @ key.transpose(-1,-2) / (d_k)**0.5
+    attention_score = query @ key.transpose(-1, -2) / math.sqrt(d_k)
     if mask is not None:
-        attention_score = attention_score.masked_fill(~mask , value = float('-inf'))
-    attention_weights = attention_score.softmax(axis = -1)
+        attention_score = attention_score.masked_fill(~mask, value=float('-inf'))
+    attention_weights = attention_score.softmax(dim=-1)
     if mask is not None:
         attention_weights = attention_weights.nan_to_num(nan=0.0)
     context_vector = attention_weights @ value
-    return (context_vector,attention_weights)
+    return (context_vector, attention_weights)
 
 # Step 23 - split_last_dim_into_heads
 import torch
