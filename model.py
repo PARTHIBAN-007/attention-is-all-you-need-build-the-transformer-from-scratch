@@ -271,9 +271,9 @@ def merge_heads_and_project_output(context, w_o, b_o):
 import torch
 
 def assemble_multi_head_attention_forward(query, key, value, w_q, w_k, w_v, w_o, num_heads, mask=None):
-    query = query @ w_q
-    key = key @ w_k
-    value = value @ w_v
+    query = query @ w_q.T
+    key = key @ w_k.T
+    value = value @ w_v.T
     
     batch_size, seq_len_q, d_model = query.shape
     _, seq_len_kv, _ = key.shape
@@ -284,19 +284,19 @@ def assemble_multi_head_attention_forward(query, key, value, w_q, w_k, w_v, w_o,
     key = key.view(batch_size, seq_len_kv, num_heads, head_dim).transpose(-2, -3)
     value = value.view(batch_size, seq_len_kv, num_heads, head_dim).transpose(-2, -3)
 
-    attention_score = query @ key.transpose(-2, -1) / (head_dim ** 0.5)
+    attention_score = query @ key.transpose(-2, -1) / math.sqrt(head_dim)
     
     if mask is not None:
-        mask_expanded = mask.unsqueeze(1).unsqueeze(2)
-        attention_score = attention_score.masked_fill(mask_expanded == False, -torch.inf)
+        attention_score = attention_score.masked_fill(mask == False, -torch.inf)
         
     attention_weights = attention_score.softmax(dim=-1)
+    attention_weights = torch.nan_to_num(attention_weights, nan=0.0)
     context_vector = attention_weights @ value
 
     context_vector = context_vector.transpose(-2, -3)
     context_vector = context_vector.reshape(batch_size, seq_len_q, num_heads * head_dim)
     
-    return context_vector @ w_o
+    return context_vector @ w_o.T
 
 # Step 32 - apply_ffn_first_linear_and_relu
 import torch
@@ -578,16 +578,24 @@ def init_embedding_and_projection_parameters(vocab_size, d_model, tie_weights=Tr
 import torch
 
 def collect_model_parameters_into_list(encoder_layer_params, decoder_layer_params, embedding_params):
-    weights = torch.empty()
+    weights = []
+    seen_ids = set()
     
-    for key,val in encoder_layer_params.items():
-        weights.expand(val)
-    
-    for key,val in decoder_layer_params.items():
-        weights.expand(val)
-
-    for key,val in embedding_params.items():
-        weights.expand(val)
+    def extract(obj):
+        if isinstance(obj, torch.Tensor):
+            if id(obj) not in seen_ids:
+                seen_ids.add(id(obj))
+                weights.append(obj)
+        elif isinstance(obj, dict):
+            for val in obj.values():
+                extract(val)
+        elif isinstance(obj, (list, tuple)):
+            for item in obj:
+                extract(item)
+                
+    extract(encoder_layer_params)
+    extract(decoder_layer_params)
+    extract(embedding_params)
     
     return weights
 
