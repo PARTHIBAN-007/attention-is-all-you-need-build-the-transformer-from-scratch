@@ -71,7 +71,7 @@ import math
 import torch
 
 def scale_embeddings_by_sqrt_d_model(embeddings, d_model):
-    return embeddings * (d_model**0.5)
+    return embeddings * math.sqrt(d_model)
 
 # Step 8 - compute_positional_div_term
 import torch
@@ -439,20 +439,19 @@ def apply_log_softmax_over_vocab(logits):
     return logits.log_softmax(dim=-1)
 
 # Step 51 - run_transformer_forward
+import torch
+
 def run_transformer_forward(src_ids, tgt_ids, model_params, num_heads, pad_id):
     d_model = model_params["token_embedding"].shape[-1]
     
-    src_emb = model_params["token_embedding"][src_ids]
-    tgt_emb = model_params["token_embedding"][tgt_ids]
+    max_len = max(src_ids.shape[1], tgt_ids.shape[1])
+    pe_table = build_sinusoidal_positional_encoding(max_len, d_model)
     
-    src_emb = scale_embeddings_by_sqrt_d_model(src_emb, d_model)
-    tgt_emb = scale_embeddings_by_sqrt_d_model(tgt_emb, d_model)
+    src_emb = scale_embeddings_by_sqrt_d_model(model_params["token_embedding"][src_ids], d_model)
+    src_emb = add_positional_encoding_to_embeddings(src_emb, pe_table)
     
-    src_pe = build_sinusoidal_positional_encoding(src_ids.shape[1], d_model).to(src_emb.device)
-    tgt_pe = build_sinusoidal_positional_encoding(tgt_ids.shape[1], d_model).to(tgt_emb.device)
-    
-    src_emb = add_positional_encoding_to_embeddings(src_emb, src_pe)
-    tgt_emb = add_positional_encoding_to_embeddings(tgt_emb, tgt_pe)
+    tgt_emb = scale_embeddings_by_sqrt_d_model(model_params["token_embedding"][tgt_ids], d_model)
+    tgt_emb = add_positional_encoding_to_embeddings(tgt_emb, pe_table)
     
     src_mask = build_padding_mask(src_ids, pad_id)
     tgt_pad_mask = build_padding_mask(tgt_ids, pad_id)
@@ -460,7 +459,14 @@ def run_transformer_forward(src_ids, tgt_ids, model_params, num_heads, pad_id):
     tgt_mask = combine_padding_and_causal_masks(tgt_pad_mask, tgt_causal_mask)
     
     encoder_output = stack_encoder_layers(src_emb, model_params["encoder_layers"], num_heads, src_mask)
-    decoder_output = stack_decoder_layers(tgt_emb, encoder_output, model_params["decoder_layers"], num_heads, src_mask, tgt_mask)
+    decoder_output = stack_decoder_layers(
+        tgt_emb, 
+        encoder_output, 
+        model_params["decoder_layers"], 
+        num_heads, 
+        src_mask, 
+        tgt_mask
+    )
     
     proj_weight = model_params.get("output_projection_weight", model_params["token_embedding"])
     proj_bias = model_params.get("output_projection_bias", None)
