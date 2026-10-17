@@ -613,10 +613,13 @@ def collect_model_parameters_into_list(encoder_layer_params, decoder_layer_param
 
 # Step 56 - shift_targets_right_with_start_token
 def shift_targets_right_with_start_token(target_ids, start_token_id):
-    return target_ids[:][start_token_id:][:]
+    return target_ids[:,:-1]
 
-# Step 57 - compute_noam_learning_rate (not yet solved)
-# TODO: implement
+# Step 57 - compute_noam_learning_rate
+import math
+def compute_noam_learning_rate(step, d_model, warmup_steps):
+    lr = math.pow(d_model,-0.5) * min(math.pow(step,-0.5),step * math.pow(warmup_steps,-3/2))
+    return lr
 
 # Step 58 - build_uniform_smoothing_distribution (not yet solved)
 # TODO: implement
