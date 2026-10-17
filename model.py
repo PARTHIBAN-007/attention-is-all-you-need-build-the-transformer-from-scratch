@@ -621,8 +621,13 @@ def compute_noam_learning_rate(step, d_model, warmup_steps):
     lr = math.pow(d_model,-0.5) * min(math.pow(step,-0.5),step * math.pow(warmup_steps,-3/2))
     return lr
 
-# Step 58 - build_uniform_smoothing_distribution (not yet solved)
-# TODO: implement
+# Step 58 - build_uniform_smoothing_distribution
+import torch
+
+def build_uniform_smoothing_distribution(shape, vocab_size, epsilon):
+    uniform =  torch.zeros(shape)
+    uniform[:][:] = epsilon / (vocab_size-2)
+    return uniform
 
 # Step 59 - set_confidence_on_gold_tokens (not yet solved)
 # TODO: implement
