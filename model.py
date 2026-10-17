@@ -640,8 +640,11 @@ def build_uniform_smoothing_distribution(shape, vocab_size, epsilon):
 import torch
 
 def set_confidence_on_gold_tokens(smoothed_distribution, gold_token_ids, confidence):
-    smoothed_distribution[:,gold_token_ids[:][:],:] = confidence
-    return smoothed_distribution
+    dist = smoothed_distribution.clone()
+    b_idx = torch.arange(dist.size(0), device=dist.device)[:, None]
+    s_idx = torch.arange(dist.size(1), device=dist.device)[None, :]
+    dist[b_idx, s_idx, gold_token_ids] = confidence
+    return dist
 
 # Step 60 - zero_pad_column_and_pad_token_rows (not yet solved)
 # TODO: implement
