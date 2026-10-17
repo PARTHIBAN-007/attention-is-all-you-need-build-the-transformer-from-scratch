@@ -613,7 +613,14 @@ def collect_model_parameters_into_list(encoder_layer_params, decoder_layer_param
 
 # Step 56 - shift_targets_right_with_start_token
 def shift_targets_right_with_start_token(target_ids, start_token_id):
-    return target_ids[:,:-1]
+    batch_size = target_ids.size(0)
+    start_tokens = torch.full(
+        (batch_size, 1), 
+        start_token_id, 
+        dtype=target_ids.dtype, 
+        device=target_ids.device
+    )
+    return torch.cat([start_tokens, target_ids[:, :-1]], dim=1)
 
 # Step 57 - compute_noam_learning_rate
 import math
@@ -629,8 +636,12 @@ def build_uniform_smoothing_distribution(shape, vocab_size, epsilon):
     uniform[:][:] = epsilon / (vocab_size-2)
     return uniform
 
-# Step 59 - set_confidence_on_gold_tokens (not yet solved)
-# TODO: implement
+# Step 59 - set_confidence_on_gold_tokens
+import torch
+
+def set_confidence_on_gold_tokens(smoothed_distribution, gold_token_ids, confidence):
+    smoothed_distribution[:,gold_token_ids[:][:],:] = confidence
+    return smoothed_distribution
 
 # Step 60 - zero_pad_column_and_pad_token_rows (not yet solved)
 # TODO: implement
