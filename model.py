@@ -713,8 +713,8 @@ def update_adam_second_moment(v_prev, grad, beta2):
 import torch
 
 def apply_adam_bias_correction(m_t, v_t, beta1, beta2, step):
-    m_hat = m_t / (1-beta1**step)
-    v_hat = v_t / (1-beta2**step)
+    m_hat = torch.tensor(m_t) / torch.tensor((1- (beta1 **step)))
+    v_hat = torch.tensor(v_t) / torch.tensor((1-(beta2**step)))
     return (m_hat,v_hat)
 
 # Step 68 - compute_adam_parameter_update
@@ -724,8 +724,24 @@ def compute_adam_parameter_update(m_hat, v_hat, learning_rate, epsilon):
     delta = learning_rate * m_hat / (torch.sqrt(v_hat) + epsilon)
     return delta
 
-# Step 69 - apply_adam_step_to_all_parameters (not yet solved)
-# TODO: implement
+# Step 69 - apply_adam_step_to_all_parameters
+import torch
+
+def apply_adam_step_to_all_parameters(parameter_list, optimizer_state, learning_rate, beta1=0.9, beta2=0.98, epsilon=1e-9):
+    optimizer_state['t'] += 1
+    t = optimizer_state['t']
+    for idx, param in enumerate(parameter_list):
+        if param.grad is not None:
+            m_prev = optimizer_state['m'][idx]
+            v_prev = optimizer_state['v'][idx]
+            m_t = update_adam_first_moment(m_prev, param.grad, beta1)
+            v_t = update_adam_second_moment(v_prev, param.grad, beta2)
+            optimizer_state['m'][idx] = m_t
+            optimizer_state['v'][idx] = v_t
+            m_hat, v_hat = apply_adam_bias_correction(m_t, v_t, beta1, beta2, t)
+            delta = compute_adam_parameter_update(m_hat, v_hat, learning_rate, epsilon)
+            param.data.copy_(param.data - delta)    
+    return optimizer_state
 
 # Step 70 - zero_all_parameter_gradients (not yet solved)
 # TODO: implement
