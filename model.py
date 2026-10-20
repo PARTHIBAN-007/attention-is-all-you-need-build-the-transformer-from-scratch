@@ -801,8 +801,22 @@ def compute_candidate_scores(beam_scores, next_token_log_probs):
     scores = scores.expand(-1,vocab_size)
     return next_token_log_probs + scores
 
-# Step 77 - select_top_k_candidates (not yet solved)
-# TODO: implement
+# Step 77 - select_top_k_candidates
+import torch
+
+def select_top_k_candidates(candidate_scores, k):
+    vocab_size = candidate_scores.shape[-1]
+    values , indices = torch.topk(candidate_scores.flatten(),k)
+    token_ids = []
+    beam_ids = []
+    for idx in indices:
+        token_ids.append(idx%vocab_size)
+        beam_ids.append(idx//vocab_size)
+    return {
+        "beam_indices": torch.tensor(beam_ids),
+        "token_ids": torch.tensor(token_ids),
+        "scores": torch.tensor(values)
+    }
 
 # Step 78 - append_tokens_to_beam_sequences (not yet solved)
 # TODO: implement
