@@ -775,16 +775,11 @@ def run_training_step_with_backprop(src_batch, tgt_batch, parameter_list, model_
     learning_rate = get_noam_lr(step_number, d_model, warmup_steps)
     if 'lr_scale' in config:
         learning_rate *= config['lr_scale']
-    beta1 = config.get('beta1', 0.9)
-    beta2 = config.get('beta2', 0.98)
-    epsilon = config.get('epsilon', 1e-9)
+
     apply_adam_step_to_all_parameters(
         parameter_list, 
         optimizer_state, 
         learning_rate, 
-        beta1=beta1, 
-        beta2=beta2, 
-        epsilon=epsilon
     )
     return loss.item()
 
