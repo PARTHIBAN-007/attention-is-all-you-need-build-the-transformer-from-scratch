@@ -750,8 +750,14 @@ def zero_all_parameter_gradients(parameter_list):
     for param in parameter_list:
         param.grad = None
 
-# Step 71 - compute_batch_training_loss (not yet solved)
-# TODO: implement
+# Step 71 - compute_batch_training_loss
+def compute_batch_training_loss(src_batch, tgt_batch, model_params, config):
+    tgt = shift_targets_right_with_start_token(tgt_batch,config["start_id"])
+    logits = run_transformer_forward(src_batch,tgt,model_params,config["num_heads"],config["pad_id"])
+    smoothed_distribution = build_uniform_smoothing_distribution(logits.shape,config["vocab_size"],0.1)
+    dist = set_confidence_on_gold_tokens(smoothed_distribution,tgt,config["smoothing"])
+    total_loss = compute_label_smoothed_kl_loss(logits,dist)
+    return average_loss_over_non_pad_tokens(total_loss,tgt,config["pad_id"])
 
 # Step 72 - run_training_step_with_backprop (not yet solved)
 # TODO: implement
