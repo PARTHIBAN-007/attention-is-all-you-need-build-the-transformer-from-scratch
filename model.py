@@ -762,21 +762,17 @@ def compute_batch_training_loss(src_batch, tgt_batch, model_params, config):
 # Step 72 - run_training_step_with_backprop
 import torch
 
+
 def get_noam_lr(step_number, d_model, warmup_steps):
     step = max(1, step_number)
     return (d_model ** -0.5) * min(step ** -0.5, step * (warmup_steps ** -1.5))
-
+    
 def run_training_step_with_backprop(src_batch, tgt_batch, parameter_list, model_params, optimizer_state, step_number, config):
     zero_all_parameter_gradients(parameter_list)
     loss = compute_batch_training_loss(src_batch,tgt_batch,model_params,config)
     loss.backward()
     learning_rate = get_noam_lr(step_number, config.get('d_model'), config.get('warmup_steps'))
-    
-    apply_adam_step_to_all_parameters(
-        parameter_list, 
-        optimizer_state, 
-        learning_rate, 
-    )
+    apply_adam_step_to_all_parameters(parameter_list,optimizer_state,learning_rate)
     return loss.item()
 
 # Step 73 - run_training_loop_for_steps (not yet solved)
