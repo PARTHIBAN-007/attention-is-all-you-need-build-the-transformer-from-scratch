@@ -770,12 +770,8 @@ def run_training_step_with_backprop(src_batch, tgt_batch, parameter_list, model_
     zero_all_parameter_gradients(parameter_list)
     loss = compute_batch_training_loss(src_batch,tgt_batch,model_params,config)
     loss.backward()
-    d_model = config.get('d_model', 512)
-    warmup_steps = config.get('warmup_steps', 4000)
-    learning_rate = get_noam_lr(step_number, d_model, warmup_steps)
-    if 'lr_scale' in config:
-        learning_rate *= config['lr_scale']
-
+    learning_rate = get_noam_lr(step_number, config.get('d_model'), config.get('warmup_steps'))
+    
     apply_adam_step_to_all_parameters(
         parameter_list, 
         optimizer_state, 
